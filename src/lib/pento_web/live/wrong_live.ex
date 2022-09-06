@@ -2,7 +2,10 @@ defmodule PentoWeb.WrongLive do
   use Phoenix.LiveView, layout: {PentoWeb.LayoutView, "live.html"}
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, score: 0, time: time(), message: "Make a guess:")}
+    {:ok, assign(socket,  _target: generate_random_number(),
+                          score: 0,
+                          time: time(),
+                          message: "Make a guess (1-10):")}
   end
 
   def render(assigns) do
@@ -22,13 +25,32 @@ defmodule PentoWeb.WrongLive do
 
   def handle_event("guess", %{"number" => guess}=data, socket) do
     time = time()
-    message = "Your guess: #{guess}. Wrong. Guess again. "
-    score = socket.assigns.score - 1
+    target = socket.assigns._target
+
+    message = if guess == target do
+      "Your guess: #{guess}. Correct. A new target has been generated, guess again? "
+    else
+      "Your guess: #{guess}. Wrong. Guess again. "
+    end
+
+    target = if guess == target do
+      generate_random_number()
+    else
+      target
+    end
+
+    score = if guess == target do
+      socket.assigns.score + 1
+    else
+      socket.assigns.score - 1
+    end
+
 
     {
       :noreply,
       assign(
         socket,
+        _target: target,
         time: time,
         message: message,
         score: score)}
@@ -36,6 +58,10 @@ defmodule PentoWeb.WrongLive do
 
   def time() do
     DateTime.utc_now() |> to_string()
+  end
+
+  def generate_random_number() do
+    :rand.uniform(10) |> to_string()
   end
 
 end
