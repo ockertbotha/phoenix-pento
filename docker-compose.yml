@@ -1,0 +1,20 @@
+version: "3.9"
+
+services:
+  pento:
+    build: .
+    volumes:
+      - ./src:/app
+    ports:
+      - "4000:4000"
+    depends_on:
+      - pento-db
+  pento-db:
+    image: postgres:9.6
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /var/lib/postgresql/data/pgdata
+    restart: always
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data

@@ -1,10 +1,13 @@
 /_build
 /cover
+/config/*.secret.exs
 /deps
 /doc
+/pgdata
 /.fetch
 erl_crash.dump
 *.ez
 *.beam
-/config/*.secret.exs
 .elixir_ls/
+.alias*
+
